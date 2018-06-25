@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<%- include('../components/head'); %>
+<body>
+  <%- include('../components/header'); %>
+  <div class="main-body">
+    <div class="container">
+      <div>
+        <h1>Playlists</h1>
+        <% if (results.items) {%>
+        <p>Select a playlist to view its tracks.</p>
+        <ul class="list-group">
+        <% results.items.forEach(function(item){ %>
+          <li id="<%= item.id%>" data-value="<%=item.href%>" class="list-group-item"><a href="/playlist/<%=item.owner.id%>/<%=item.id%>/0"><%=item.name%></a></li>
+          <% }); %>
+        </ul>
+        <%} else {%>
+          <p>No playlists found.</p>
+          <%}%>
+          <% if (results.previous) { %>
+          <a class="btn btn-primary" href="<%=results.offset - results.limit%>">Previous Page</a>
+          <% }%>
+          <% if (results.next) { %>
+            <a class="btn btn-primary" href="<%=results.offset + results.limit%>">Next Page</a>
+          <% }%>
+      </div>
+    </div>
+  </div>
+</body>
+<%- include('../components/footer'); %>
+</html>

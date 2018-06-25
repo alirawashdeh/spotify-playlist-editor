@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<%- include('../components/head'); %>
+<body>
+  <%- include('../components/header'); %>
+  <div class="main-body">
+    <div class="container">
+      <div>
+        <div class="BackToPlaylistsButton">
+          <a class="btn btn-primary" href="/home/0">Back</a>
+        </div>
+        <h1>Tracks</h1>
+        <% if (results.items) { %>
+        <p>Reorder tracks using the handle at the right.</p>
+        <ul id="trackList" class="list-group">
+        <% results.items.forEach(function(item, i){ %>
+          <li class="list-group-item">
+            <div class = "trackandartist">
+              <%=item.track.name%>
+              <span class="artist"><%=item.track.artists[0].name%></span>
+            </div>
+            <span class="drag-handle">☰</span>
+            <a id="<%=(i + results.offset)%>-movedown" class="<%if (i + results.offset >= results.total - 1){%>updown-arrows-hidden<% } else { %>updown-arrows<% } %>" href="/reorder/<%=userId%>/<%=playlistId%>/<%=results.offset%>/<%=i + results.offset%>/<%=i + results.offset + 2%>">↓</a>
+            <a id="<%=(i + results.offset)%>-moveup" class="<%if (i + results.offset <= 0){%>updown-arrows-hidden<% } else { %>updown-arrows<% } %>" href="/reorder/<%=userId%>/<%=playlistId%>/<%=results.offset%>/<%=i + results.offset%>/<%=i + results.offset - 1%>">↑</a>
+          </li>
+        <% }); %>
+      </ul>
+      <% } else { %>
+        <p>No tracks found.</p>
+      <% } %>
+      <% if (results.previous) { %>
+      <a id="previousbutton" class="btn btn-primary" href="<%=results.offset - results.limit%>">Previous Page</a>
+      <% }%>
+      <% if (results.next) { %>
+      <a id="nextbutton" class="btn btn-primary" href="<%=results.offset + results.limit%>">Next Page</a>
+      <% }%>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+
+    Sortable.create(trackList, {delay:0, handle: ".drag-handle", forceFallback: true,
+    onEnd: function (/**Event*/evt) {
+      moveItem(<%=results.offset%>,evt.oldIndex,evt.newIndex);
+    }
+  });
+
+  function moveItem(currentOffset, oldPos, newPos) {
+
+    document.getElementById('trackList').classList.add('disabled');
+    httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = handleMoveResult;
+    var buffer = (newPos > oldPos)?1:0;
+    httpRequest.open('GET', '/api/reorder/<%=userId%>/<%=playlistId%>/' + (oldPos + currentOffset) + '/' + (newPos + currentOffset + buffer) + '');
+    httpRequest.send();
+
+  }
+
+  function handleMoveResult() {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      if (httpRequest.status === 200) {
+        resetUpDownArrows();
+        document.getElementById('trackList').classList.remove('disabled');
+      } else {
+        alert('There was a problem with the request.');
+        document.getElementById('trackList').classList.remove('disabled');
+      }
+    }
+  }
+
+  function resetUpDownArrows() {
+    var i;
+    for(i = 0; i < document.getElementById('trackList').children.length ; i++)
+    {
+      var movedown = document.getElementById('trackList').children[i].children[2];
+      movedown.href = "/reorder/<%=userId%>/<%=playlistId%>/<%=results.offset%>/" + (i + <%=results.offset%>) + "/" + (i + <%=results.offset%> + 2);
+      movedown.className = 'updown-arrows';
+      var moveup = document.getElementById('trackList').children[i].children[3];
+      moveup.href = "/reorder/<%=userId%>/<%=playlistId%>/<%=results.offset%>/" + (i + <%=results.offset%>) + "/" + (i + <%=results.offset%> - 1);
+      moveup.className = 'updown-arrows';
+
+      if(i + <%=results.offset%> == 0)
+      {
+        moveup.className = 'updown-arrows-hidden';
+      }
+      if((i + <%=results.offset%> >= <%=results.total%> - 1))
+      {
+        movedown.className = 'updown-arrows-hidden';
+      }
+    }
+  }
+
+</script>
+<%- include('../components/footer'); %>
+</html>
