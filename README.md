@@ -8,7 +8,7 @@ Currently hosted at [www.playlisteditor.com](http://www.playlisteditor.com)
 ![ScreenShot](screenshots.png)
 
 ### But why?
-Currently, the Android Spotify app doesn't allow you reorder tracks in your playlists - this must be carried out on the desktop application or iOS app.
+When this app was created, the Android Spotify app didn't provide a feature for users to reorder tracks in their playlists - it needed to be carried out on the desktop application or iOS app. As of mid-2018, the feature was finally added to the Android app.
 
 ## Configuration
 
