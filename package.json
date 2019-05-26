@@ -9,7 +9,7 @@
     "cookie-parser": "^1.4.3",
     "ejs": "2.5.5",
     "express": "^4.16.3",
-    "spotify-web-api-node": "^3.1.1"
+    "spotify-web-api-node": "^4.0.0"
   },
   "engines": {
     "node": "10.4.1"
